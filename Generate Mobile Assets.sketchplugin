@@ -62,7 +62,12 @@ function main(){
             prefix = configVars.prefixName + "_";
         }
     } 
-    
+
+    format = [doc askForUserInput:"Please enter a file format (jpg/png):" initialValue:"png"];
+    if (format != "jpg" && format != "png") {
+        format = "png";
+    }
+
     var base_dir = get_dir_from_prompt(get_cwd());
     if (base_dir == null){
 	    alert("Not saving any assets");
@@ -123,16 +128,16 @@ function process_slice(slice, doc, base_dir, prefix, suffix, size){
 
     
     var androidFactors = [NSArray arrayWithObjects:
-        ["mdpi",1/baseSize],
-        ["hdpi", 1.5/baseSize],
-        ["xhdpi", 2/baseSize],
-        ["xxhdpi", 3/baseSize],
-        ["xxxhdpi", 4/baseSize]];
+        ["drawable-mdpi",1/baseSize],
+        ["drawable-hdpi", 1.5/baseSize],
+        ["drawable-xhdpi", 2/baseSize],
+        ["drawable-xxhdpi", 3/baseSize],
+        ["drawable-xxxhdpi", 4/baseSize]];
 	
     var iOSFactors = [NSArray arrayWithObjects:
-	    [".png", 1/baseSize],
-	    ["@2x.png", 2/baseSize],
-	    ["@3x.png", 3/baseSize]];
+	    ["", 1/baseSize],
+	    ["@2x", 2/baseSize],
+	    ["@3x", 3/baseSize]];
 
     for (var i = 0; i < [androidFactors count]; i++){
         var base = [androidFactors objectAtIndex:i];
@@ -142,7 +147,7 @@ function process_slice(slice, doc, base_dir, prefix, suffix, size){
 	    log("Processing " + slice_name + name + "(" + factor + ")");
         var slice_size = [slice_width * factor];
 	    var version = copy_layer_with_factor(slice, factor);
-	    var file_name = base_dir + "/android/" + name + "/" + prefix + slice_name + suffix + slice_width + ".png";
+	    var file_name = base_dir + "/android/" + name + "/" + prefix + slice_name + suffix + slice_width + "." + format;
 	    [doc saveArtboardOrSlice:version toFile:file_name];
 	    log("Saved " + file_name);
     }
@@ -155,7 +160,7 @@ function process_slice(slice, doc, base_dir, prefix, suffix, size){
 	    log("Processing " + slice_name + name + "(" + factor + ")");
         var slice_size = [slice_width * factor];
 	    var version = copy_layer_with_factor(slice, factor);
-	    var file_name = base_dir + "/iOS/" + prefix + slice_name + suffix + slice_width + name;
+	    var file_name = base_dir + "/iOS/" + prefix + slice_name + suffix + slice_width + name + "." + format;
 	    [doc saveArtboardOrSlice:version toFile:file_name];
 	    log("Saved " + file_name);
     }
